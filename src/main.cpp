@@ -68,6 +68,25 @@ Node *insert(Node *n, int key) {
   return n;
 }
 
+Node *searchNoRecurse(Node *root, int key) {
+  if (!root)
+    return nullptr;
+  if (root->key == key)
+    return root;
+
+  Node *p = root;
+  while (!p) {
+    if (p->key == key)
+      return p;
+    if (key > p->key) {
+      p = p->right;
+    } else {
+      p = p->left;
+    }
+  }
+  return nullptr;
+}
+
 Node *search(Node *n, int key) {
   if (!n)
     return nullptr;
@@ -85,5 +104,6 @@ int main() {
   std::cout << (insert(tree->root, 10) ? "true" : "false") << std::endl;
   std::cout << (insert(tree->root, 4) ? "true" : "false") << std::endl;
   std::cout << (search(tree->root, 5) ? "true" : "false") << std::endl;
+  std::cout << (searchNoRecurse(tree->root, 3) ? "true" : "false") << std::endl;
   return 0;
 }
