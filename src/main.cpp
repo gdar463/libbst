@@ -21,19 +21,19 @@ struct Node {
 };
 
 struct Bst {
-  Node *head;
+  Node *root;
 
-  Bst(Node *_head = nullptr) { head = _head; }
+  Bst(Node *_root = nullptr) { root = _root; }
 };
 
 bool insertNoRecurse(Bst *tree, int key) {
   if (!tree)
     return false;
-  if (!tree->head) {
-    tree->head = new Node(key);
+  if (!tree->root) {
+    tree->root = new Node(key);
     return true;
   }
-  Node *p = tree->head;
+  Node *p = tree->root;
   while (true) {
     if (p->key == key)
       return false;
