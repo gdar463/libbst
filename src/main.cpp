@@ -67,10 +67,22 @@ Node *insert(Node *n, int key) {
   return n;
 }
 
+Node *search(Node *n, int key) {
+  if (!n)
+    return nullptr;
+  if (n->key == key)
+    return n;
+
+  if (key > n->key)
+    return search(n->right, key);
+  return search(n->left, key);
+}
+
 int main() {
   Bst *tree = new Bst();
   std::cout << (insertNoRecurse(tree, 5) ? "true" : "false") << std::endl;
   std::cout << (insert(tree->root, 10) ? "true" : "false") << std::endl;
   std::cout << (insert(tree->root, 4) ? "true" : "false") << std::endl;
+  std::cout << (search(tree->root, 5) ? "true" : "false") << std::endl;
   return 0;
 }
