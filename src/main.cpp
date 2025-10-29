@@ -98,6 +98,33 @@ Node *search(Node *n, int key) {
   return search(n->left, key);
 }
 
+void preOrder(Node *n) {
+  if (!n)
+    return;
+
+  std::cout << n->key << " ";
+  preOrder(n->left);
+  preOrder(n->right);
+}
+
+void inOrder(Node *n) {
+  if (!n)
+    return;
+
+  inOrder(n->left);
+  std::cout << n->key << " ";
+  inOrder(n->right);
+}
+
+void postOrder(Node *n) {
+  if (!n)
+    return;
+
+  postOrder(n->left);
+  postOrder(n->right);
+  std::cout << n->key << " ";
+}
+
 int main() {
   Bst *tree = new Bst();
   std::cout << (insertNoRecurse(tree, 5) ? "true" : "false") << std::endl;
@@ -105,5 +132,11 @@ int main() {
   std::cout << (insert(tree->root, 4) ? "true" : "false") << std::endl;
   std::cout << (search(tree->root, 5) ? "true" : "false") << std::endl;
   std::cout << (searchNoRecurse(tree->root, 3) ? "true" : "false") << std::endl;
+  preOrder(tree->root);
+  std::cout << std::endl;
+  inOrder(tree->root);
+  std::cout << std::endl;
+  postOrder(tree->root);
+  std::cout << std::endl;
   return 0;
 }
