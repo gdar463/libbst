@@ -21,37 +21,29 @@ struct Node {
   }
 };
 
-struct Bst {
-  Node *root;
-
-  Bst(Node *_root = nullptr) { root = _root; }
-};
-
-bool insertNoRecurse(Bst *tree, int key) {
-  if (!tree)
-    return false;
-  if (!tree->root) {
-    tree->root = new Node(key);
-    return true;
+Node *insertNoRecurse(Node *root, int key) {
+  if (!root) {
+    return new Node(key);
   }
-  Node *p = tree->root;
+  Node *p = root;
   while (true) {
     if (p->key == key)
-      return false;
+      break;
     if (key < p->key) {
       if (!p->left) {
         p->left = new Node(key);
-        return true;
+        break;
       }
       p = p->left;
     } else {
       if (!p->right) {
         p->right = new Node(key);
-        return true;
+        break;
       }
       p = p->right;
     }
   }
+  return root;
 }
 
 Node *insert(Node *n, int key) {
@@ -126,17 +118,29 @@ void postOrder(Node *n) {
 }
 
 int main() {
-  Bst *tree = new Bst();
-  std::cout << (insertNoRecurse(tree, 5) ? "true" : "false") << std::endl;
-  std::cout << (insert(tree->root, 10) ? "true" : "false") << std::endl;
-  std::cout << (insert(tree->root, 4) ? "true" : "false") << std::endl;
-  std::cout << (search(tree->root, 5) ? "true" : "false") << std::endl;
-  std::cout << (searchNoRecurse(tree->root, 3) ? "true" : "false") << std::endl;
-  preOrder(tree->root);
+  Node *root = new Node();
+  root = insertNoRecurse(root, 5);
+  std::cout << "inserted non-recursive 5" << std::endl;
+  root = insert(root, 10);
+  std::cout << "inserted 10" << std::endl;
+  root = insert(root, 4);
+  std::cout << "inserted 4" << std::endl;
+  std::cout << "search 5: " << (search(root, 5) ? "true" : "false")
+            << std::endl;
+  std::cout << "search 3: " << (search(root, 3) ? "true" : "false")
+            << std::endl;
+  std::cout << "search non-recursive 10: "
+            << (searchNoRecurse(root, 10) ? "true" : "false") << std::endl;
+  std::cout << "search non-recursive 3: "
+            << (searchNoRecurse(root, 3) ? "true" : "false") << std::endl;
+  std::cout << "pre order: ";
+  preOrder(root);
   std::cout << std::endl;
-  inOrder(tree->root);
+  std::cout << "in order: ";
+  inOrder(root);
   std::cout << std::endl;
-  postOrder(tree->root);
+  std::cout << "post order: ";
+  postOrder(root);
   std::cout << std::endl;
   return 0;
 }
