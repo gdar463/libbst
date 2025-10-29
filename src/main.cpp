@@ -26,7 +26,7 @@ struct Bst {
   Bst(Node *_head = nullptr) { head = _head; }
 };
 
-bool push(Bst *tree, int key) {
+bool insertNoRecurse(Bst *tree, int key) {
   if (!tree)
     return false;
   if (!tree->head) {
@@ -55,6 +55,6 @@ bool push(Bst *tree, int key) {
 
 int main() {
   Bst *tree = new Bst();
-  std::cout << (push(tree, 5) ? "true" : "false") << std::endl;
+  std::cout << (insertNoRecurse(tree, 5) ? "true" : "false") << std::endl;
   return 0;
 }
