@@ -53,8 +53,24 @@ bool insertNoRecurse(Bst *tree, int key) {
   }
 }
 
+Node *insert(Node *n, int key) {
+  if (!n)
+    return new Node(key);
+  if (key == n->key)
+    return n;
+
+  if (key > n->key) {
+    n->right = insert(n->right, key);
+  } else {
+    n->left = insert(n->left, key);
+  }
+  return n;
+}
+
 int main() {
   Bst *tree = new Bst();
   std::cout << (insertNoRecurse(tree, 5) ? "true" : "false") << std::endl;
+  std::cout << (insert(tree->root, 10) ? "true" : "false") << std::endl;
+  std::cout << (insert(tree->root, 4) ? "true" : "false") << std::endl;
   return 0;
 }
