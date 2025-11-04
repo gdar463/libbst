@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 
 struct Node {
   int key;
@@ -88,6 +89,52 @@ Node *search(Node *n, int key) {
   if (key > n->key)
     return search(n->right, key);
   return search(n->left, key);
+}
+
+bool deleteNode(Node *root, int key) {
+  if (!root)
+    return false;
+
+  Node *prev = root;
+  bool isLeft;
+  while (!prev) {
+    if (prev->left && prev->left->key == key) {
+      isLeft = true;
+      break;
+    } else if (prev->right && prev->right->key == key) {
+      isLeft = false;
+      break;
+    }
+    if (key > prev->key) {
+      prev = prev->right;
+    } else {
+      prev = prev->left;
+    }
+  }
+  if (!prev)
+    return false;
+
+  Node *curr = isLeft ? prev->left : prev->right;
+  if (!curr->left && !curr->right) { // caso 1: nessun figlio
+    if (isLeft) {
+      delete prev->left;
+      prev->left = nullptr;
+    } else {
+      delete prev->right;
+      prev->right = nullptr;
+    }
+  } else if (curr->left && !curr->right) { // caso 2a: solo sinistro
+    std::swap(curr->key, curr->left->key);
+    delete curr->left;
+    curr->left = nullptr;
+  } else if (!curr->left && curr->right) { // caso 2b: solo destra
+    std::swap(curr->key, curr->right->key);
+    delete curr->right;
+    curr->right = nullptr;
+  } else { // caso 3: tutti e due figli
+  }
+
+  return true;
 }
 
 void preOrder(Node *n) {
