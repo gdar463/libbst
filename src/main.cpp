@@ -166,6 +166,27 @@ void postOrder(Node *n) {
   std::cout << n->key << " ";
 }
 
+void debug(Node *n) {
+  if (!n) {
+    std::cout << "e ";
+    return;
+  } else {
+    std::cout << " ";
+  }
+
+  std::cout << n->key;
+  if (!n->left && !n->right) {
+    std::cout << "f ";
+    return;
+  } else {
+    std::cout << " ";
+  }
+  std::cout << "l";
+  debug(n->left);
+  std::cout << "r";
+  debug(n->right);
+}
+
 int main() {
   Node *root = new Node(50);
   root = insertNoRecurse(root, 30);
@@ -199,11 +220,11 @@ int main() {
     std::cout << mark << " ";
   }
   std::cout << std::endl;
-  preOrder(root);
+  debug(root);
   std::cout << std::endl;
   std::cout << "deleting 100: ";
   std::cout << (deleteNode(root, 100) ? "true" : "false") << std::endl;
-  preOrder(root);
+  debug(root);
   std::cout << std::endl;
   return 0;
 }
