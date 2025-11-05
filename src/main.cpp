@@ -1,7 +1,5 @@
-#include <cstdlib>
-#include <ctime>
+#include <cstring>
 #include <iostream>
-#include <utility>
 
 struct Node {
   int key;
@@ -166,10 +164,9 @@ void postOrder(Node *n) {
   std::cout << n->key << " ";
 }
 
-
 void debug(Node *n);
 
-int main() {
+int main(int argc, char **argv) {
   Node *root = new Node(50);
   root = insertNoRecurse(root, 30);
   std::cout << "inserted non-recursive 30" << std::endl;
@@ -194,14 +191,27 @@ int main() {
   std::cout << "post order: ";
   postOrder(root);
   std::cout << std::endl;
-  std::cout << "random inserts: ";
-  srand(time(NULL));
-  for (int i = 0; i < 15; i++) {
-    int mark = rand() % 20 * 10;
-    insert(root, mark);
-    std::cout << mark << " ";
+  if (argc == 3 && strcmp(argv[1], "--det") == 0) {
+    int len = std::atoi(argv[2]);
+    int *nodes = new int[len];
+    std::cout << "enter space-delimeted nodes: ";
+    for (int i = 0; i < len; i++) {
+      std::cin >> nodes[i];
+    }
+    for (int *p = nodes; p != nodes + len; ++p) {
+      insert(root, *p);
+    }
+    delete[] nodes;
+  } else {
+    std::cout << "random inserts: ";
+    srand(time(NULL));
+    for (int i = 0; i < 15; i++) {
+      int mark = rand() % 20 * 10;
+      insert(root, mark);
+      std::cout << mark << " ";
+    }
+    std::cout << std::endl;
   }
-  std::cout << std::endl;
   debug(root);
   std::cout << std::endl;
   std::cout << "deleting 100: ";
