@@ -202,10 +202,10 @@ int main(int argc, char **argv) {
       insert(root, *p);
     }
     delete[] nodes;
-  } else {
+  } else if (argc == 3 && strcmp(argv[1], "--rand") == 0) {
     std::cout << "random inserts: ";
     srand(time(NULL));
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < std::atoi(argv[2]); i++) {
       int mark = rand() % 20 * 10;
       insert(root, mark);
       std::cout << mark << " ";
