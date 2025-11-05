@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <utility>
 
@@ -165,21 +167,21 @@ void postOrder(Node *n) {
 }
 
 int main() {
-  Node *root = new Node();
-  root = insertNoRecurse(root, 5);
-  std::cout << "inserted non-recursive 5" << std::endl;
-  root = insert(root, 10);
-  std::cout << "inserted 10" << std::endl;
-  root = insert(root, 4);
-  std::cout << "inserted 4" << std::endl;
-  std::cout << "search 5: " << (search(root, 5) ? "true" : "false")
-            << std::endl;
-  std::cout << "search 3: " << (search(root, 3) ? "true" : "false")
-            << std::endl;
-  std::cout << "search non-recursive 10: "
-            << (searchNoRecurse(root, 10) ? "true" : "false") << std::endl;
-  std::cout << "search non-recursive 3: "
-            << (searchNoRecurse(root, 3) ? "true" : "false") << std::endl;
+  Node *root = new Node(50);
+  root = insertNoRecurse(root, 30);
+  std::cout << "inserted non-recursive 30" << std::endl;
+  root = insert(root, 60);
+  std::cout << "inserted 60" << std::endl;
+  root = insert(root, 40);
+  std::cout << "inserted 40" << std::endl;
+  std::cout << "search 50: ";
+  std::cout << (search(root, 50) ? "true" : "false") << std::endl;
+  std::cout << "search 45: ";
+  std::cout << (search(root, 45) ? "true" : "false") << std::endl;
+  std::cout << "search non-recursive 60: ";
+  std::cout << (searchNoRecurse(root, 60) ? "true" : "false") << std::endl;
+  std::cout << "search non-recursive 45: ";
+  std::cout << (searchNoRecurse(root, 45) ? "true" : "false") << std::endl;
   std::cout << "pre order: ";
   preOrder(root);
   std::cout << std::endl;
@@ -188,6 +190,20 @@ int main() {
   std::cout << std::endl;
   std::cout << "post order: ";
   postOrder(root);
+  std::cout << std::endl;
+  std::cout << "random inserts: ";
+  srand(time(NULL));
+  for (int i = 0; i < 15; i++) {
+    int mark = rand() % 20 * 10;
+    insert(root, mark);
+    std::cout << mark << " ";
+  }
+  std::cout << std::endl;
+  preOrder(root);
+  std::cout << std::endl;
+  std::cout << "deleting 100: ";
+  std::cout << (deleteNode(root, 100) ? "true" : "false") << std::endl;
+  preOrder(root);
   std::cout << std::endl;
   return 0;
 }
