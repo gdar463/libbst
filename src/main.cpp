@@ -91,49 +91,94 @@ Node *search(Node *n, int key) {
   return search(n->left, key);
 }
 
-bool deleteNode(Node *root, int key) {
+Node *nextInOrder(Node *n) {
+  if (!n)
+    return nullptr;
+  if (!n->left && !n->right) { // se non esistono figli
+    return n;
+  } else if (n->left && !n->right) { // se esiste solo figlio sinistro
+    return n;
+  } else { // se esistono entrambi o esiste solo destro
+    return nextInOrder(n->right);
+  }
+}
+
+void deleteLeafNode(Node *n, Node *&branch) {
+  delete n;
+  branch = nullptr;
+}
+
+void deletePartialNode(Node *n, Node *&branch) {
+  if (n->left) {
+    branch = n->left;
+    delete n;
+  } else {
+    branch = n->right;
+    delete n;
+  }
+}
+
+//
+// Fallisce in questa funzione, in alcuni casi, i.e. n == root
+//
+void deleteFullNode(Node *n, Node *&branch) {
+  Node *next = nextInOrder(n->left);
+  // si dà per scontato che next non abbia il figlio destro,
+  // perchè nextInOrder l'avrebbe ritornato
+  if (next->left) {
+    next->right = n->right;
+    delete n;
+    branch = next;
+  } else {
+    std::swap(n->key, next->key);
+    delete next;
+  }
+}
+
+void switchForDelete(Node *n, Node *&branch) {
+  if (!n->left && !n->right)
+    return deleteLeafNode(n, branch);
+  if (n->left && n->right)
+    return deleteFullNode(n, branch);
+  return deletePartialNode(n, branch);
+}
+
+bool deleteNodeNoRecurse(Node *&root, int key) {
   if (!root)
     return false;
 
-  Node *prev = root;
-  bool isLeft;
-  while (!prev) {
-    if (prev->left && prev->left->key == key) {
-      isLeft = true;
+  Node *p = root;
+  // uso un puntatore bool per isLeft, per sfruttare il fatto che
+  // se non toccato rimane ad un valore terzo da true e false, ovvero nullptr
+  bool *isLeft = nullptr;
+  while (p) {
+    if (p->key == key)
       break;
-    } else if (prev->right && prev->right->key == key) {
-      isLeft = false;
+    if (p->left && p->left->key == key) {
+      isLeft = new bool(true);
       break;
     }
-    if (key > prev->key) {
-      prev = prev->right;
+    if (p->right && p->right->key == key) {
+      isLeft = new bool(false);
+      break;
+    }
+    if (key > p->key) {
+      p = p->right;
     } else {
-      prev = prev->left;
+      p = p->left;
     }
   }
-  if (!prev)
-    return false;
 
-  Node *curr = isLeft ? prev->left : prev->right;
-  if (!curr->left && !curr->right) { // caso 1: nessun figlio
-    if (isLeft) {
-      delete prev->left;
-      prev->left = nullptr;
+  if (!isLeft && p == root) {
+    switchForDelete(root, root);
+  } else {
+    if (*isLeft) {
+      switchForDelete(p->left, p->left);
     } else {
-      delete prev->right;
-      prev->right = nullptr;
+      switchForDelete(p->right, p->right);
     }
-  } else if (curr->left && !curr->right) { // caso 2a: solo sinistro
-    std::swap(curr->key, curr->left->key);
-    delete curr->left;
-    curr->left = nullptr;
-  } else if (!curr->left && curr->right) { // caso 2b: solo destra
-    std::swap(curr->key, curr->right->key);
-    delete curr->right;
-    curr->right = nullptr;
-  } else { // caso 3: tutti e due figli
   }
-
+  delete isLeft;
   return true;
 }
 
@@ -214,8 +259,13 @@ int main(int argc, char **argv) {
   }
   debug(root);
   std::cout << std::endl;
-  std::cout << "deleting 100: ";
-  std::cout << (deleteNode(root, 100) ? "true" : "false") << std::endl;
+  std::cout << "found 100: ";
+  Node *found = search(root, 100);
+  std::cout << (found ? "true" : "false") << std::endl;
+  inOrder(root);
+  std::cout << std::endl;
+  std::cout << "deleting 60: ";
+  std::cout << (deleteNodeNoRecurse(root, 60) ? "true" : "false") << std::endl;
   debug(root);
   std::cout << std::endl;
   return 0;
