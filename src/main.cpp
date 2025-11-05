@@ -91,50 +91,39 @@ Node *search(Node *n, int key) {
   return search(n->left, key);
 }
 
-bool deleteNode(Node *root, int key) {
-  if (!root)
-    return false;
+Node *preInOrder(Node *n) {
+  if (!n->right)
+    return n;
+  return preInOrder(n->right);
+}
 
-  Node *prev = root;
-  bool isLeft;
-  while (!prev) {
-    if (prev->left && prev->left->key == key) {
-      isLeft = true;
-      break;
-    } else if (prev->right && prev->right->key == key) {
-      isLeft = false;
-      break;
-    }
-    if (key > prev->key) {
-      prev = prev->right;
+Node *deleteNode(Node *n, int key) {
+  if (!n)
+    return nullptr;
+
+  if (key > n->key) {
+    n->right = deleteNode(n->right, key);
+  } else if (key < n->key) {
+    n->left = deleteNode(n->left, key);
+  } else {
+    if (!n->left && !n->right) {
+      delete n;
+      return nullptr;
+    } else if (n->left && !n->right) {
+      Node *temp = n->left;
+      delete n;
+      return temp;
+    } else if (!n->left && n->right) {
+      Node *temp = n->right;
+      delete n;
+      return temp;
     } else {
-      prev = prev->left;
+      Node *pre = preInOrder(n->left);
+      if (pre->left) {
+      }
     }
   }
-  if (!prev)
-    return false;
-
-  Node *curr = isLeft ? prev->left : prev->right;
-  if (!curr->left && !curr->right) { // caso 1: nessun figlio
-    if (isLeft) {
-      delete prev->left;
-      prev->left = nullptr;
-    } else {
-      delete prev->right;
-      prev->right = nullptr;
-    }
-  } else if (curr->left && !curr->right) { // caso 2a: solo sinistro
-    std::swap(curr->key, curr->left->key);
-    delete curr->left;
-    curr->left = nullptr;
-  } else if (!curr->left && curr->right) { // caso 2b: solo destra
-    std::swap(curr->key, curr->right->key);
-    delete curr->right;
-    curr->right = nullptr;
-  } else { // caso 3: tutti e due figli
-  }
-
-  return true;
+  return n;
 }
 
 void preOrder(Node *n) {
@@ -170,8 +159,8 @@ int main(int argc, char **argv) {
   Node *root = new Node(50);
   root = insertNoRecurse(root, 30);
   std::cout << "inserted non-recursive 30" << std::endl;
-  root = insert(root, 60);
-  std::cout << "inserted 60" << std::endl;
+  root = insert(root, 20);
+  std::cout << "inserted 20" << std::endl;
   root = insert(root, 40);
   std::cout << "inserted 40" << std::endl;
   std::cout << "search 50: ";
@@ -214,8 +203,10 @@ int main(int argc, char **argv) {
   }
   debug(root);
   std::cout << std::endl;
-  std::cout << "deleting 100: ";
-  std::cout << (deleteNode(root, 100) ? "true" : "false") << std::endl;
+  std::cout << "preInOrder 50: ";
+  std::cout << preInOrder(search(root, 50)->left)->key << std::endl;
+  // deleteNode(root, 100);
+  // std::cout << "deleted 100" << std::endl;
   debug(root);
   std::cout << std::endl;
   return 0;
