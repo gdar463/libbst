@@ -166,26 +166,8 @@ void postOrder(Node *n) {
   std::cout << n->key << " ";
 }
 
-void debug(Node *n) {
-  if (!n) {
-    std::cout << "e ";
-    return;
-  } else {
-    std::cout << " ";
-  }
 
-  std::cout << n->key;
-  if (!n->left && !n->right) {
-    std::cout << "f ";
-    return;
-  } else {
-    std::cout << " ";
-  }
-  std::cout << "l";
-  debug(n->left);
-  std::cout << "r";
-  debug(n->right);
-}
+void debug(Node *n);
 
 int main() {
   Node *root = new Node(50);
@@ -227,4 +209,25 @@ int main() {
   debug(root);
   std::cout << std::endl;
   return 0;
+}
+
+void debug(Node *n) {
+  if (!n) {
+    std::cout << "e ";
+    return;
+  } else {
+    std::cout << " ";
+  }
+
+  std::cout << n->key;
+  if (!n->left && !n->right) {
+    std::cout << "f ";
+    return;
+  } else {
+    std::cout << " ";
+  }
+  std::cout << "l";
+  debug(n->left);
+  std::cout << "r";
+  debug(n->right);
 }
