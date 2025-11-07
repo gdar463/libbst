@@ -91,10 +91,12 @@ Node *search(Node *n, int key) {
   return search(n->left, key);
 }
 
-Node *preInOrder(Node *n) {
+Node *parentPreInOrder(Node *n) {
   if (!n->right)
     return n;
-  return preInOrder(n->right);
+  if (!n->right->right)
+    return n;
+  return parentPreInOrder(n->right);
 }
 
 Node *deleteNode(Node *n, int key) {
@@ -118,8 +120,16 @@ Node *deleteNode(Node *n, int key) {
       delete n;
       return temp;
     } else {
-      Node *pre = preInOrder(n->left);
-      if (pre->left) {
+      Node *parentPre = parentPreInOrder(n->left);
+      if (parentPre->right) {
+        Node *pre = parentPre->right;
+        std::swap(pre->key, n->key);
+        parentPre->right = pre->left;
+        delete pre;
+      } else {
+        std::swap(parentPre->key, n->key);
+        n->left = parentPre->left;
+        delete parentPre;
       }
     }
   }
@@ -203,10 +213,10 @@ int main(int argc, char **argv) {
   }
   debug(root);
   std::cout << std::endl;
-  std::cout << "preInOrder 50: ";
-  std::cout << preInOrder(search(root, 50)->left)->key << std::endl;
-  // deleteNode(root, 100);
-  // std::cout << "deleted 100" << std::endl;
+  std::cout << "parentPreInOrder 50: ";
+  std::cout << parentPreInOrder(search(root, 50)->left)->key << std::endl;
+  root = deleteNode(root, 50);
+  std::cout << "deleted 50" << std::endl;
   debug(root);
   std::cout << std::endl;
   return 0;
