@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 
 struct Node {
@@ -90,6 +91,51 @@ Node *search(Node *n, int key) {
   return search(n->left, key);
 }
 
+Node *parentPreInOrder(Node *n) {
+  if (!n->right)
+    return n;
+  if (!n->right->right)
+    return n;
+  return parentPreInOrder(n->right);
+}
+
+Node *deleteNode(Node *n, int key) {
+  if (!n)
+    return nullptr;
+
+  if (key > n->key) {
+    n->right = deleteNode(n->right, key);
+  } else if (key < n->key) {
+    n->left = deleteNode(n->left, key);
+  } else {
+    if (!n->left && !n->right) {
+      delete n;
+      return nullptr;
+    } else if (n->left && !n->right) {
+      Node *temp = n->left;
+      delete n;
+      return temp;
+    } else if (!n->left && n->right) {
+      Node *temp = n->right;
+      delete n;
+      return temp;
+    } else {
+      Node *parentPre = parentPreInOrder(n->left);
+      if (parentPre->right) {
+        Node *pre = parentPre->right;
+        std::swap(pre->key, n->key);
+        parentPre->right = pre->left;
+        delete pre;
+      } else {
+        std::swap(parentPre->key, n->key);
+        n->left = parentPre->left;
+        delete parentPre;
+      }
+    }
+  }
+  return n;
+}
+
 void preOrder(Node *n) {
   if (!n)
     return;
@@ -117,22 +163,24 @@ void postOrder(Node *n) {
   std::cout << n->key << " ";
 }
 
-int main() {
-  Node *root = new Node();
-  root = insertNoRecurse(root, 5);
-  std::cout << "inserted non-recursive 5" << std::endl;
-  root = insert(root, 10);
-  std::cout << "inserted 10" << std::endl;
-  root = insert(root, 4);
-  std::cout << "inserted 4" << std::endl;
-  std::cout << "search 5: " << (search(root, 5) ? "true" : "false")
-            << std::endl;
-  std::cout << "search 3: " << (search(root, 3) ? "true" : "false")
-            << std::endl;
-  std::cout << "search non-recursive 10: "
-            << (searchNoRecurse(root, 10) ? "true" : "false") << std::endl;
-  std::cout << "search non-recursive 3: "
-            << (searchNoRecurse(root, 3) ? "true" : "false") << std::endl;
+void debug(Node *n);
+
+int main(int argc, char **argv) {
+  Node *root = new Node(50);
+  root = insertNoRecurse(root, 30);
+  std::cout << "inserted non-recursive 30" << std::endl;
+  root = insert(root, 20);
+  std::cout << "inserted 20" << std::endl;
+  root = insert(root, 40);
+  std::cout << "inserted 40" << std::endl;
+  std::cout << "search 50: ";
+  std::cout << (search(root, 50) ? "true" : "false") << std::endl;
+  std::cout << "search 45: ";
+  std::cout << (search(root, 45) ? "true" : "false") << std::endl;
+  std::cout << "search non-recursive 60: ";
+  std::cout << (searchNoRecurse(root, 60) ? "true" : "false") << std::endl;
+  std::cout << "search non-recursive 45: ";
+  std::cout << (searchNoRecurse(root, 45) ? "true" : "false") << std::endl;
   std::cout << "pre order: ";
   preOrder(root);
   std::cout << std::endl;
@@ -142,5 +190,55 @@ int main() {
   std::cout << "post order: ";
   postOrder(root);
   std::cout << std::endl;
+  if (argc == 3 && strcmp(argv[1], "--det") == 0) {
+    int len = std::atoi(argv[2]);
+    int *nodes = new int[len];
+    std::cout << "enter space-delimeted nodes: ";
+    for (int i = 0; i < len; i++) {
+      std::cin >> nodes[i];
+    }
+    for (int *p = nodes; p != nodes + len; ++p) {
+      insert(root, *p);
+    }
+    delete[] nodes;
+  } else if (argc == 3 && strcmp(argv[1], "--rand") == 0) {
+    std::cout << "random inserts: ";
+    srand(time(NULL));
+    for (int i = 0; i < std::atoi(argv[2]); i++) {
+      int mark = rand() % 20 * 10;
+      insert(root, mark);
+      std::cout << mark << " ";
+    }
+    std::cout << std::endl;
+  }
+  debug(root);
+  std::cout << std::endl;
+  std::cout << "parentPreInOrder 50: ";
+  std::cout << parentPreInOrder(search(root, 50)->left)->key << std::endl;
+  root = deleteNode(root, 50);
+  std::cout << "deleted 50" << std::endl;
+  debug(root);
+  std::cout << std::endl;
   return 0;
+}
+
+void debug(Node *n) {
+  if (!n) {
+    std::cout << "e ";
+    return;
+  } else {
+    std::cout << " ";
+  }
+
+  std::cout << n->key;
+  if (!n->left && !n->right) {
+    std::cout << "f ";
+    return;
+  } else {
+    std::cout << " ";
+  }
+  std::cout << "l";
+  debug(n->left);
+  std::cout << "r";
+  debug(n->right);
 }
